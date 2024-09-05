@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, useAnimation, useMotionValue } from "framer-motion";
+import { motion, PanInfo, useAnimation, useMotionValue } from "framer-motion";
 import "./TarotWheel.css";
 
 const cardData = [
@@ -130,7 +130,7 @@ export const TarotWheel = () => {
   const position = 4;
   const offset = (360 / numberOfCards) * position;
   const endValue = useMotionValue(360 * spinCount - offset);
-  const onAnimationStart = (info) => {
+  const onAnimationStart = (event: PointerEvent, info: PanInfo): void => {
     console.log("isAnimationStart", isAnimationStart);
     setIsAnimationStart(true);
     rotateControl.start("start");
@@ -158,12 +158,12 @@ export const TarotWheel = () => {
           top: height - curcleRadius * 0.8,
         }}
         custom={{
-          rotate: [0, endValue.current],
-          endDeg: endValue.current,
+          rotate: [0, endValue.get()],
+          endDeg: endValue.get(),
         }}
         animate={rotateControl}
         variants={rotateV}
-        onPanStart={onAnimationStart}
+        onPan={onAnimationStart}
         onClick={onAnimationEnd}
         // onPanEnd={onAnimationEnd}
       >
