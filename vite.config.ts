@@ -1,6 +1,14 @@
-import { defineConfig } from "vite";
+import { defineConfig, PluginOption } from "vite";
 import react from "@vitejs/plugin-react";
 import fs from "fs";
+
+const fullReloadAlways: PluginOption = {
+  name: "full-reload-always",
+  handleHotUpdate({ server }) {
+    server.ws.send({ type: "full-reload" });
+    return [];
+  },
+} as PluginOption;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,12 +16,13 @@ export default defineConfig({
     react({
       include: "**/*.tsx",
     }),
+    fullReloadAlways,
   ],
   server: {
     port: 443,
     host: "0.0.0.0",
     hmr: {
-      host: "team.local",
+      host: "localhost",
       port: 443,
     },
     https: {
