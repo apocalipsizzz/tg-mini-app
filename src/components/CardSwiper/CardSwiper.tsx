@@ -10,29 +10,31 @@ import "./CardSwiper.css";
 export const CardSwiper = () => {
   const initialPosition = Math.round(cardData.length / 2);
 
-  const handleSlideChange = (swiper: { slides: any; activeIndex: number }) => {
-    console.log("slide change", swiper.activeIndex + 1);
+  const handleSlideChange = (swiper: {
+    slides: HTMLElement[];
+    activeIndex: number;
+  }) => {
     console.log("swiper", swiper);
     const selectedSlide = swiper.slides[swiper.activeIndex];
-    console.log("selectedSlide", selectedSlide);
+    console.log("selectedSlide22", selectedSlide);
   };
 
   return (
     <>
       <Swiper
+        className="cards-swiper"
         effect={"cards"}
+        modules={[EffectCards]}
         cardsEffect={{
           perSlideOffset: 20, // Space between cards in px
           perSlideRotate: 10, // Rotation of cards in degrees
         }}
         grabCursor={true}
         initialSlide={initialPosition}
-        modules={[EffectCards]}
-        className="mySwiper"
         onSlideChange={handleSlideChange}
       >
         {cardData.map((card) => {
-          return <SwiperSlide key={card.id}>{card.id}</SwiperSlide>;
+          return <SwiperSlide key={card.id}>{card.url}</SwiperSlide>;
         })}
       </Swiper>
     </>
