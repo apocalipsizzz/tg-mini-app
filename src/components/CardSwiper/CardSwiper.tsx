@@ -34,7 +34,11 @@ export const CardSwiper = () => {
         onSlideChange={handleSlideChange}
       >
         {cardData.map((card) => {
-          return <SwiperSlide key={card.id}>{card.url}</SwiperSlide>;
+          return (
+            <SwiperSlide key={card.id}>
+              <img src={card.url} alt={card.id} />
+            </SwiperSlide>
+          );
         })}
       </Swiper>
     </>

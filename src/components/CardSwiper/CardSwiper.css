@@ -19,6 +19,12 @@
   translate: 0 -30px;
 }
 
+.swiper-slide img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
 .swiper-slide:nth-child(1n) {
   background-color: rgb(206, 17, 17);
 }
