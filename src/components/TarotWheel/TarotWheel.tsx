@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, TapInfo, useAnimation, useMotionValue } from "framer-motion";
+import { throttle } from "lodash";
 import "./TarotWheel.css";
 
 const cardData = [
@@ -110,114 +111,17 @@ const curcleRadius = Math.max(
   width / curcleVisibilityPercentage
 );
 
-// const rotateV = {
-//   start: ({ rotate }: { rotate: number }) => ({
-//     rotate: rotate,
-//     transition: { type: "tween", duration: 8, ease: [0.5, 0.1, 0.15, 1] },
-//   }),
-//   stop: ({ endDeg }: { endDeg: number }) => ({
-//     rotate: endDeg,
-//     transition: { type: "tween", duration: 0 },
-//   }),
-// };
-
 export const TarotWheel = () => {
-  // const [isAnimationStart, setIsAnimationStart] = useState(false);
-  // const [widthX, setWidthX] = useState<number>(1);
-  // const [touchStartX, setTouchStartX] = useState<number>(1);
-  // const [touchEndX, setTouchEndX] = useState<number>(1);
-
-  // const rotateControl = useAnimation();
-  // const onAnimationStart = (event: PointerEvent, info: TapInfo): void => {
-  //   console.log("onAnimationStart info", info);
-  //   setIsAnimationStart(true);
-  //   rotateControl.start("start");
-  //   const pointX = Math.round(info.point.x);
-  //   const windowX = window.innerWidth;
-  //   if (pointX < 200) {
-  //     setWidthX(-pointX);
-  //   } else {
-  //     setWidthX(pointX);
-  //   }
-  //   // setTimeout(() => {
-  //   //   rotateControl.start("stop");
-  //   //   pulseControl.start(vPulse);
-  //   //   setIsAnimationStart(false);
-  //   // }, 8000);
-  // };
-  // // const endValue = useMotionValue(widthX);
-  // // console.log("widthX1", widthX);
-  // const onAnimationEnd = () => {
-  //   rotateControl.start("stop");
-  //   setIsAnimationStart(false);
-  // };
-
-  // const cardWeel = document.querySelector(".card-wheel");
-  // cardWeel?.addEventListener("touchstart", (event) => {
-  //   // const { touches, changedTouches } = event.originalEvent ?? event;
-  //   // const touch = touches[0];
-  //   // setTouchX(touch.clientX);
-  //   // console.log("event start", event);
-  //   // console.log("event start", event.touches[0].clientX);
-  //   setTouchStartX(event.touches[0].clientX);
-  //   // console.log("touch start", touch);
-  // });
-  // // cardWeel?.addEventListener("touchend", (event) => {
-  // //   console.log("event end", event);
-  // //   console.log("event end", event.changedTouches[0].clientX);
-  // //   setTouchEndX(event.changedTouches[0].clientX);
-  // //   // const { touches, changedTouches } = event.originalEvent ?? event;
-  // //   // const touch = touches[0] ?? changedTouches[0];
-  // //   // const x = touch.pageX - touchX;
-  // //   // console.log("touch end", touch);
-  // //   // console.log("touchX1", touchX);
-  // //   // console.log("event1", x);
-  // //   // setWidthX(x);
-  // //   // const touch = event.touches[0] || event.changedTouches[0];
-  // //   // const realTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-  // //   // event.offsetX = touch.clientX - realTarget.getBoundingClientRect().x;
-  // //   // console.log("event1", event.offsetX);
-  // // });
-  // cardWeel?.addEventListener("touchmove", (event) => {
-  //   // const { touches, changedTouches } = event.originalEvent ?? event;
-  //   // const touch = touches[0];
-  //   // setTouchX(touch.clientX);
-  //   // console.log("event touchmove", event);
-  //   // console.log("event touchmove", event.changedTouches[0].clientX);
-  //   setTouchEndX(event.changedTouches[0].clientX);
-  //   // console.log("event start", event.touches[0].clientX);
-  //   // setTouchStartX(event.touches[0].clientX);
-  //   // console.log("touch start", touch);
-  // });
-
-  // useEffect(() => {
-  //   setWidthX(touchEndX - touchStartX);
-  // }, [touchEndX]);
-
-  // // console.log("touchStartX", touchStartX);
-  // // console.log("touchEndX", touchEndX);
-  // console.log("touch diff", widthX);
-
-  // const refWheel = useRef<HTMLDivElement>(null);
   const [dial, setDial] = useState(
     document.querySelector(".card-wheel") as HTMLElement
   );
-  const [acceleration, setAcceleration] = useState(1);
-  const [touchStart, setTouchStart] = useState(1);
-  const [touchEnd, setTouchEnd] = useState(1);
-  // const dial = document.querySelector(".card-wheel") as HTMLElement;
-  // const dial = refWheel.current;
-  const radius = curcleRadius / 2;
+  const radius = dial?.offsetWidth / 2;
   const rect = dial?.getBoundingClientRect() || { top: 0, left: 0 };
   const dialX = rect.left + radius;
   const dialY = rect.top + radius;
 
-  let currentRotation = 1;
+  let currentRotation = 0;
   let lastRotation = currentRotation;
-  let touchStartX = 1;
-  let touchEndX = 1;
-  let touchStartT = 1;
-  let touchEndT = 1;
 
   console.log("dialX", dialX);
   console.log("dialY", dialY);
@@ -226,7 +130,11 @@ export const TarotWheel = () => {
     const radians = Math.atan2(x - dialX, y - dialY);
     const degrees = Math.round(radians * (180 / Math.PI) + 100);
 
-    return degrees;
+    console.log("x - dialX", x - dialX);
+    console.log("y - dialY", y - dialY);
+    console.log("radians", radians);
+    console.log("degrees", degrees);
+    return degrees * 5;
   };
 
   type Touch = {
@@ -242,17 +150,17 @@ export const TarotWheel = () => {
 
   const getPosition = (event: {
     touches: Touch[];
-    changedTouches: { pageX: number; pageY: number }[];
-    pageX: number;
-    pageY: number;
+    changedTouches: { clientX: number; clientY: number }[];
+    clientX: number;
+    clientY: number;
   }) => {
-    // console.log(event);
+    console.log(event);
     const x = event.touches
-      ? event.changedTouches[0].pageX * -100
-      : event.pageX;
+      ? event.changedTouches[0].clientX * -100
+      : event.clientX;
     const y = event.touches
-      ? event.changedTouches[0].pageY * -100
-      : event.pageY;
+      ? event.changedTouches[0].clientY * -100
+      : event.clientY;
 
     return { x, y };
   };
@@ -274,15 +182,6 @@ export const TarotWheel = () => {
 
     setRotation(degrees);
     lastRotation = degrees;
-
-    console.log("degrees", degrees);
-    console.log("currentRotation", currentRotation);
-    console.log("lastRotation", lastRotation);
-
-    // setTouchEnd(event.changedTouches[0].clientX);
-    // console.log("qq", ...Object.values(getPosition(event)));
-    // console.log("degrees", degrees);
-    // console.log("lastRotation", lastRotation);
   };
 
   setRotation(currentRotation);
@@ -294,31 +193,20 @@ export const TarotWheel = () => {
 
   dial?.addEventListener("mousedown", (event) => {
     setDegrees(event);
-    dial?.addEventListener("mousemove", rotate);
-    // console.log("mousedown", event);
+    document.addEventListener("mousemove", rotate);
   });
 
   dial?.addEventListener("touchstart", (event) => {
     setDegrees(event);
-    // touchStartX = event.touches[0].clientX;
-    // touchStartT = new Date().getTime();
-    dial?.addEventListener("touchmove", rotate);
-    // console.log("touchstart", touchStartX);
-    // console.log("touchStartT", touchStartT);
+    document.addEventListener("touchmove", rotate);
   });
 
-  dial?.addEventListener("mouseup", () => {
-    dial?.removeEventListener("mousemove", rotate);
-
-    // console.log("mouseup", event);
+  document.addEventListener("mouseup", () => {
+    document.removeEventListener("mousemove", rotate);
   });
 
-  dial?.addEventListener("touchend", (event) => {
-    // touchEndX = event.changedTouches[0].clientX;
-    // touchEndT = new Date().getTime();
-    dial?.removeEventListener("touchmove", rotate);
-    // console.log("touchend", touchEndX);
-    // console.log("touchEndT", touchEndT);
+  document.addEventListener("touchcancel", () => {
+    document.removeEventListener("touchmove", rotate);
   });
 
   return (
