@@ -202,6 +202,9 @@ export const TarotWheel = () => {
   const [dial, setDial] = useState(
     document.querySelector(".card-wheel") as HTMLElement
   );
+  const [acceleration, setAcceleration] = useState(1);
+  const [touchStart, setTouchStart] = useState(1);
+  const [touchEnd, setTouchEnd] = useState(1);
   // const dial = document.querySelector(".card-wheel") as HTMLElement;
   // const dial = refWheel.current;
   const radius = curcleRadius / 2;
@@ -209,8 +212,12 @@ export const TarotWheel = () => {
   const dialX = rect.left + radius;
   const dialY = rect.top + radius;
 
-  let currentRotation = 45;
+  let currentRotation = 1;
   let lastRotation = currentRotation;
+  let touchStartX = 1;
+  let touchEndX = 1;
+  let touchStartT = 1;
+  let touchEndT = 1;
 
   console.log("dialX", dialX);
   console.log("dialY", dialY);
@@ -261,12 +268,21 @@ export const TarotWheel = () => {
     }
   };
 
-  const rotate = (event: any) => {
+  const rotate = (event: MouseEvent | TouchEvent) => {
     const degrees =
       getDegress(...Object.values(getPosition(event))) - currentRotation;
 
     setRotation(degrees);
     lastRotation = degrees;
+
+    console.log("degrees", degrees);
+    console.log("currentRotation", currentRotation);
+    console.log("lastRotation", lastRotation);
+
+    // setTouchEnd(event.changedTouches[0].clientX);
+    // console.log("qq", ...Object.values(getPosition(event)));
+    // console.log("degrees", degrees);
+    // console.log("lastRotation", lastRotation);
   };
 
   setRotation(currentRotation);
@@ -278,20 +294,31 @@ export const TarotWheel = () => {
 
   dial?.addEventListener("mousedown", (event) => {
     setDegrees(event);
-    document.addEventListener("mousemove", rotate);
+    dial?.addEventListener("mousemove", rotate);
+    // console.log("mousedown", event);
   });
 
   dial?.addEventListener("touchstart", (event) => {
     setDegrees(event);
-    document.addEventListener("touchmove", rotate);
+    // touchStartX = event.touches[0].clientX;
+    // touchStartT = new Date().getTime();
+    dial?.addEventListener("touchmove", rotate);
+    // console.log("touchstart", touchStartX);
+    // console.log("touchStartT", touchStartT);
   });
 
-  document.addEventListener("mouseup", () => {
-    document.removeEventListener("mousemove", rotate);
+  dial?.addEventListener("mouseup", () => {
+    dial?.removeEventListener("mousemove", rotate);
+
+    // console.log("mouseup", event);
   });
 
-  document.addEventListener("touchend", () => {
-    document.removeEventListener("touchmove", rotate);
+  dial?.addEventListener("touchend", (event) => {
+    // touchEndX = event.changedTouches[0].clientX;
+    // touchEndT = new Date().getTime();
+    dial?.removeEventListener("touchmove", rotate);
+    // console.log("touchend", touchEndX);
+    // console.log("touchEndT", touchEndT);
   });
 
   return (

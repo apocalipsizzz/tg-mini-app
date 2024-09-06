@@ -18,7 +18,7 @@ html {
 }
 body {
   margin: 0;
-  overflow-x: hidden;
+  overflow: hidden;
   font-weight: normal;
   font-style: normal;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -27,7 +27,7 @@ body {
   color: #ffffff;
   scrollbar-gutter: stable;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 a {
