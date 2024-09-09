@@ -41,9 +41,10 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100dvh;
+  width: 375px;
+  height: 667px;
   position: relative;
   flex-wrap: wrap;
   overflow: hidden;
+  margin: auto;
 }

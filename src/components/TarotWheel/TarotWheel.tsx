@@ -91,8 +91,9 @@ type Card = {
   url: string;
 };
 
-const width = window.innerWidth;
-const height = window.innerHeight;
+const wrapper = document.querySelector(".wrapper");
+const width = wrapper?.getBoundingClientRect().width || 375;
+const height = wrapper?.getBoundingClientRect().height || 667;
 const numberOfCards = cardData.length;
 const _size = 80;
 const _cardSize = {
@@ -126,15 +127,19 @@ export const TarotWheel = () => {
   console.log("dialX", dialX);
   console.log("dialY", dialY);
 
-  const getDegress = (x: number, y: number) => {
-    const radians = Math.atan2(x - dialX, y - dialY);
-    const degrees = Math.round(radians * (180 / Math.PI) + 100);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchStartY, setTouchStartY] = useState(0);
 
-    console.log("x - dialX", x - dialX);
-    console.log("y - dialY", y - dialY);
-    console.log("radians", radians);
-    console.log("degrees", degrees);
-    return degrees * 5;
+  const getDegress = (x: number, y: number) => {
+    const acceleration = 5;
+    const radians = Math.atan2(x - dialX, y - dialY);
+    const degrees = Math.round(radians * (180 / Math.PI) * acceleration + 100);
+
+    // console.log("x - dialX", x - dialX);
+    // console.log("y - dialY", y - dialY);
+    // console.log("radians", radians);
+    // console.log("degrees", degrees);
+    return degrees;
   };
 
   type Touch = {
@@ -150,17 +155,17 @@ export const TarotWheel = () => {
 
   const getPosition = (event: {
     touches: Touch[];
-    changedTouches: { clientX: number; clientY: number }[];
-    clientX: number;
-    clientY: number;
+    changedTouches: { pageX: number; pageY: number }[];
+    pageX: number;
+    pageY: number;
   }) => {
-    console.log(event);
+    // console.log(event);
     const x = event.touches
-      ? event.changedTouches[0].clientX * -100
-      : event.clientX;
+      ? event.changedTouches[0].pageX * -100
+      : event.pageX;
     const y = event.touches
-      ? event.changedTouches[0].clientY * -100
-      : event.clientY;
+      ? event.changedTouches[0].pageY * -100
+      : event.pageY;
 
     return { x, y };
   };
@@ -197,7 +202,7 @@ export const TarotWheel = () => {
   });
 
   dial?.addEventListener("touchstart", (event) => {
-    setDegrees(event);
+    setDegrees(event, true);
     document.addEventListener("touchmove", rotate);
   });
 
@@ -205,9 +210,21 @@ export const TarotWheel = () => {
     document.removeEventListener("mousemove", rotate);
   });
 
-  document.addEventListener("touchcancel", () => {
+  dial?.addEventListener("touchend", () => {
     document.removeEventListener("touchmove", rotate);
   });
+
+  const onAnimationStart = (event, info) => {
+    console.log("velocity1", info.velocity);
+    console.log("delta1", info.delta);
+    console.log("onAnimationStart", getPosition(event));
+  };
+
+  const onAnimationEnd = (event, info) => {
+    console.log("velocity2", info.velocity);
+    console.log("delta2", info.delta);
+    console.log("onAnimationEnd", getDegress(info.velocity.x, info.velocity.y));
+  };
 
   return (
     <>
@@ -230,6 +247,8 @@ export const TarotWheel = () => {
         // onTap={onAnimationStart}
         // onClick={onAnimationEnd}
         // onPanEnd={onAnimationEnd}
+        onPanStart={onAnimationStart}
+        onPanEnd={onAnimationEnd}
       >
         {cardData.map((card, index) => {
           return <TarotCard key={card.id} card={card} index={index} />;
