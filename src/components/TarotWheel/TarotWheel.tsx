@@ -123,11 +123,8 @@ export const TarotWheel = () => {
   let currentRotation = 0;
   let lastRotation = currentRotation;
 
-  console.log("dialX", dialX);
-  console.log("dialY", dialY);
-
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchStartY, setTouchStartY] = useState(0);
+  // console.log("dialX", dialX);
+  // console.log("dialY", dialY);
 
   const getDegress = (x: number, y: number) => {
     const acceleration = 5;
@@ -165,7 +162,6 @@ export const TarotWheel = () => {
     const y = event.touches
       ? event.changedTouches[0].pageY * -100
       : event.pageY;
-
     return { x, y };
   };
 
@@ -214,15 +210,15 @@ export const TarotWheel = () => {
   });
 
   const onAnimationStart = (event, info) => {
-    console.log("velocity1", info.velocity);
-    console.log("delta1", info.delta);
-    console.log("onAnimationStart", getPosition(event));
+    // console.log("velocity1", info.velocity);
+    // console.log("delta1", info.delta);
+    // console.log("onAnimationStart", getPosition(event));
   };
 
   const onAnimationEnd = (event, info) => {
-    console.log("velocity2", info.velocity);
-    console.log("delta2", info.delta);
-    console.log("onAnimationEnd", getDegress(info.velocity.x, info.velocity.y));
+    // console.log("velocity2", info.velocity);
+    // console.log("delta2", info.delta);
+    // console.log("onAnimationEnd", getDegress(info.velocity.x, info.velocity.y));
   };
 
   return (
