@@ -2,3 +2,49 @@
   --bg-primary-color: #171f2a;
   --bg-secondary-color: #202a38;
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+  font-weight: normal;
+  font-style: normal;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1;
+  background-color: var(--bg-primary-color);
+  color: #ffffff;
+  scrollbar-gutter: stable;
+  min-width: 320px;
+  min-height: 100dvh;
+}
+
+a {
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 375px;
+  height: 667px;
+  position: relative;
+  flex-wrap: wrap;
+  overflow: hidden;
+  margin: auto;
+}
