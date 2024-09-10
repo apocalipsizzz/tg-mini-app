@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { TarotWheel } from "./components/TarotWheel/TarotWheel";
+// import { TarotWheel } from "./components/TarotWheel/TarotWheel";
 import { Navigation } from "./components/Navigation/Navigation";
 import { CardSwiper } from "./components/CardSwiper/CardSwiper";
 import "./index.css";

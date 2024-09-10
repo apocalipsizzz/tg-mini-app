@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { motion, TapInfo, useAnimation, useMotionValue } from "framer-motion";
-import { throttle } from "lodash";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import "./TarotWheel.css";
 
 const cardData = [
